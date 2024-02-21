@@ -23,6 +23,7 @@ public class Task {
 
     boolean status;
 
-    @ManyToOne()
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     User user;
 }

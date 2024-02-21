@@ -7,13 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class TaskUpdateStatusRequest {
-    @NotBlank
-    private String id;
+public class TaskCreateRequest {
 
     @NotBlank
-    private Boolean status;
+    String name;
+
+    String note;
+
+    boolean status;
 }

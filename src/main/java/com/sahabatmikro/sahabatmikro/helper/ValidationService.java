@@ -20,7 +20,6 @@ public class ValidationService {
         Set<ConstraintViolation<Object>> constraintViolations = validator.validate(request);
 
         if (!constraintViolations.isEmpty()){
-            log.info("masuk sini");
             throw new ConstraintViolationException(constraintViolations);
         }
 

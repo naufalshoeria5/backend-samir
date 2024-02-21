@@ -19,7 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class UserArgumentResolver implements HandlerMethodArgumentResolver {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -30,10 +30,15 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest servletRequest = (HttpServletRequest) webRequest.getNativeRequest();
 
+        log.info("33 is");
         String token = servletRequest.getHeader("X-API-TOKEN");
-        if (token == null) throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"UNAUTHORIZED");
+        if (token == null)
+        {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"UNAUTHORIZED");
+        }
 
-        User user = userRepository.findFirstByToken(token).orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED"));
+        User user = userRepository.findFirstByToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED"));
 
         if (user.getTokenExpiredAt() < System.currentTimeMillis())
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"UNAUTHORIZED");

@@ -226,11 +226,9 @@ class AuthControllerTest {
         user.setPassword(BCrypt.hashpw("asep",BCrypt.gensalt()));
         user.setEmail("asep@mail.com");
         user.setToken("token");
-        user.setTokenExpiredAt(Utils.next30Days());
+        user.setTokenExpiredAt(System.currentTimeMillis() + 1000000000L);
 
         User save = userRepository.save(user);
-
-        log.info("user 233 {}", save.getToken());
 
         mockMvc.perform(
                 delete("/api/auth/logout")
@@ -245,11 +243,37 @@ class AuthControllerTest {
             assertNull(response.getErrors());
             assertEquals("OK",response.getData());
 
-            User userDb = userRepository.findById(user.getUsername()).orElse(null);
+            User userDb = userRepository.findFirstByUsername(user.getUsername()).orElse(null);
 
             assertNotNull(userDb);
             assertNull(userDb.getTokenExpiredAt());
             assertNull(userDb.getToken());
+        });
+    }
+    @Test
+    void logoutFailed() throws Exception {
+        User user = new User();
+        user.setId(UUID.randomUUID().toString());
+        user.setUsername("asep");
+        user.setName("Asep");
+        user.setPassword(BCrypt.hashpw("asep",BCrypt.gensalt()));
+        user.setEmail("asep@mail.com");
+        user.setToken("token");
+        user.setTokenExpiredAt(System.currentTimeMillis() + 1000000000L);
+
+        User save = userRepository.save(user);
+
+        mockMvc.perform(
+                delete("/api/auth/logout")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-API-TOKEN","token-salah")
+        ).andExpectAll(
+                status().isUnauthorized()
+        ).andDo(result -> {
+            WebResponse<String> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {
+            });
+            assertNotNull(response.getErrors());
         });
     }
 

@@ -1,19 +1,21 @@
 package com.sahabatmikro.sahabatmikro.modules.tasks.dto;
 
-import com.sahabatmikro.sahabatmikro.modules.users.entity.User;
-import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class TaskRequest {
+public class TaskUpdateRequest {
+
+    @NotBlank
     String id;
 
+    @NotBlank
     String name;
 
     String note;
